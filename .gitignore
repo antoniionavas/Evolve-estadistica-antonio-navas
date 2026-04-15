@@ -27,7 +27,10 @@ share/python-wheels/
 MANIFEST
 
 #Data
-data/
+# data/
+
+#Entorno Virtual
+estadistica_env/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
