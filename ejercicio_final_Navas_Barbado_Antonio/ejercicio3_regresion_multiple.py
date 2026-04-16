@@ -81,17 +81,19 @@ def regresion_lineal_multiple(X_train, y_train, X_test):
 
     # TODO: Paso 1 — Añadir columna de unos a X_train para el intercepto β₀
     # Pista: np.ones((n, 1)) y np.hstack([ones, X_train])
-    X_train_b = None  # ← Reemplaza None con tu implementación
+    ones_train = np.ones((X_train.shape[0], 1))
+    X_train_b = np.column_stack((ones_train, X_train)) # ← Reemplaza None con tu implementación
 
     # TODO: Paso 2 — Calcular los coeficientes β con la fórmula OLS
     # β = (XᵀX)⁻¹ Xᵀy
-    coefs = None  # ← Reemplaza None con tu implementación
+    coefs, _, _, _ = np.linalg.lstsq(X_train_b, y_train, rcond=None) # ← Reemplaza None con tu implementación
 
     # TODO: Paso 3 — Añadir columna de unos a X_test de la misma forma
-    X_test_b = None  # ← Reemplaza None con tu implementación
+    ones_test = np.ones((X_test.shape[0], 1))
+    X_test_b = np.column_stack((ones_test, X_test))  # ← Reemplaza None con tu implementación
 
     # TODO: Paso 4 — Calcular predicciones ŷ = X_test_b · β
-    y_pred = None  # ← Reemplaza None con tu implementación
+    y_pred = X_test_b @ coefs  # ← Reemplaza None con tu implementación
 
     return coefs, y_pred
 
@@ -116,7 +118,8 @@ def calcular_mae(y_real, y_pred):
     float — Valor del MAE
     """
     # TODO: Implementa el MAE sin usar sklearn
-    pass
+    return np.mean(np.abs(y_real - y_pred))
+    
 
 
 def calcular_rmse(y_real, y_pred):
@@ -135,7 +138,9 @@ def calcular_rmse(y_real, y_pred):
     float — Valor del RMSE
     """
     # TODO: Implementa el RMSE sin usar sklearn
-    pass
+    mse = np.mean((y_real - y_pred)**2)
+    return np.sqrt(mse)
+    
 
 
 def calcular_r2(y_real, y_pred):
@@ -156,7 +161,10 @@ def calcular_r2(y_real, y_pred):
     float — Valor del R² (entre -∞ y 1; cuanto más cercano a 1, mejor)
     """
     # TODO: Implementa el R² sin usar sklearn
-    pass
+    ss_res = np.sum((y_real - y_pred)**2)
+    ss_tot = np.sum((y_real - np.mean(y_real))**2)
+    return 1 - (ss_res / ss_tot)
+    
 
 
 # =============================================================================
@@ -182,7 +190,23 @@ def graficar_real_vs_predicho(y_real, y_pred, ruta_salida="output/ej3_prediccion
     #   - Dibuja la línea de referencia perfecta: y = x
     #   - Añade etiquetas a los ejes y título
     #   - Guarda con plt.savefig(ruta_salida, dpi=150, bbox_inches='tight')
-    pass
+    plt.figure(figsize=(10, 6))
+    plt.scatter(y_real, y_pred, alpha=0.6, color='royalblue', label='Predicciones')
+    lims = [
+        np.min([plt.xlim(), plt.ylim()]),  # min de ambos ejes
+        np.max([plt.xlim(), plt.ylim()]),  # max de ambos ejes
+    ]
+    plt.plot(lims, lims, 'r--', alpha=0.75, zorder=0, label='Referencia perfecta')
+    
+    plt.title('Valores Reales vs. Predichos (OLS Manual)', fontsize=14)
+    plt.xlabel('Valores Reales', fontsize=12)
+    plt.ylabel('Valores Predichos', fontsize=12)
+    plt.legend()
+    plt.grid(True, linestyle='--', alpha=0.7)
+    
+    plt.savefig(ruta_salida, dpi=150, bbox_inches='tight')
+    plt.close()
+    
 
 
 # =============================================================================

@@ -1,0 +1,10 @@
+RESUMEN: REGRESIÓN LINEAL
+======================================
+
+MAE:  801.56$
+RMSE: 1159.61$
+R2:   0.9154
+
+ANÁLISIS:
+- El modelo explica el 91.54% de la varianza del precio.
+- Error promedio por diamante es de 801.56 $.
