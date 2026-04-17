@@ -39,6 +39,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import os
+from statsmodels.tsa.seasonal import seasonal_decompose
+from statsmodels.tsa.stattools import adfuller
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from scipy import stats
 
 # Crear carpeta de salida si no existe
 os.makedirs("output", exist_ok=True)
@@ -114,8 +118,17 @@ def visualizar_serie(serie):
     - Añade título, etiquetas de ejes y una cuadrícula suave
     - Guarda con plt.savefig("output/ej4_serie_original.png", dpi=150, bbox_inches='tight')
     """
-    # TODO: Implementa la visualización de la serie
-    pass
+    fig, ax = plt.subplots(figsize=(14, 4))
+    ax.plot(serie.index, serie.values, color='teal', linewidth=1, label='Valor diario')
+    
+    ax.set_title('Serie Temporal Sintética (2018-2023)', fontsize=14)
+    ax.set_xlabel('Fecha', fontsize=12)
+    ax.set_ylabel('Valor', fontsize=12)
+    ax.grid(True, linestyle='--', alpha=0.6)
+    ax.legend()
+    
+    plt.savefig("output/ej4_serie_original.png", dpi=150, bbox_inches='tight')
+    plt.close()
 
 
 # =============================================================================
@@ -144,11 +157,16 @@ def descomponer_serie(serie):
     - resultado.plot() genera los 4 subgráficos automáticamente
     - Guarda la figura con fig.savefig(...)
     """
-    # TODO: Implementa la descomposición
-    # resultado = seasonal_decompose(...)
-    # fig = resultado.plot()
-    # ...
-    pass
+    resultado = seasonal_decompose(serie, model='additive', period=365)
+    
+    # Personalizamos el gráfico para que se vea mejor que el default
+    fig = resultado.plot()
+    fig.set_size_inches(12, 10)
+    fig.suptitle('Descomposición de la Serie Temporal', fontsize=16, y=1.02)
+    
+    fig.savefig("output/ej4_descomposicion.png", dpi=150, bbox_inches='tight')
+    plt.close()
+    return resultado
 
 
 # =============================================================================
@@ -186,28 +204,44 @@ def analizar_residuo(residuo):
     - ACF / PACF:
         from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
     """
-    # TODO: Limpia el residuo (elimina NaN al inicio/fin)
-    residuo_limpio = None  # ← residuo.dropna()
+    
+    residuo_limpio = residuo.dropna()  # ← residuo.dropna()
 
-    # TODO: Calcula estadísticos básicos
-    media    = None
-    std      = None
-    asimetria = None
-    curtosis  = None
+    # Estadísticos numéricos
+    media = residuo_limpio.mean()
+    std = residuo_limpio.std()
+    asimetria = residuo_limpio.skew()
+    curtosis = residuo_limpio.kurtosis()
 
+    # Test de Normalidad (Jarque-Bera)
+    jb_stat, jb_p = stats.jarque_bera(residuo_limpio)
 
-    # TODO: Test de estacionariedad (ADF)
-    # from statsmodels.tsa.stattools import adfuller
-    # resultado_adf = adfuller(residuo_limpio)
-    # p_adf = resultado_adf[1]
+    
+    # Test de Estacionariedad (ADF)
+    adf_res = adfuller(residuo_limpio)
+    adf_p = adf_res[1]
+    
 
-    # TODO: Gráfico ACF y PACF del residuo → output/ej4_acf_pacf.png
-    pass
+    # Gráfico ACF y PACF
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 6))
+    plot_acf(residuo_limpio, ax=ax1, lags=40, title="Autocorrelación (ACF)")
+    plot_pacf(residuo_limpio, ax=ax2, lags=40, title="Autocorrelación Parcial (PACF)")
+    plt.savefig("output/ej4_acf_pacf.png", dpi=150)
+    plt.close()
 
-    # TODO: Histograma del residuo con curva normal superpuesta
-    # → output/ej4_histograma_ruido.png
-    # Pista: usa scipy.stats.norm.pdf para la curva teórica
-    pass
+    # Histograma + Curva Normal
+    plt.figure(figsize=(10, 6))
+    plt.hist(residuo_limpio, bins=40, density=True, alpha=0.6, color='gray', label='Residuo Real')
+    
+    # Curva normal teórica
+    x = np.linspace(residuo_limpio.min(), residuo_limpio.max(), 100)
+    p = stats.norm.pdf(x, media, std)
+    plt.plot(x, p, 'r', linewidth=2, label='Normal Teórica')
+    
+    plt.title('Distribución del Residuo vs. Curva Normal')
+    plt.legend()
+    plt.savefig("output/ej4_histograma_ruido.png", dpi=150)
+    plt.close()
 
 
 # =============================================================================
@@ -261,7 +295,6 @@ if __name__ == "__main__":
         "ej4_descomposicion.png",
         "ej4_acf_pacf.png",
         "ej4_histograma_ruido.png",
-        "ej4_analisis.txt",
     ]
     for s in salidas:
         existe = os.path.exists(f"output/{s}")

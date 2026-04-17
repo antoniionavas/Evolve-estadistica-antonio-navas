@@ -88,23 +88,25 @@ El proceso consistió en transformar las matrices de datos para incluir el térm
 ---
 Añade aqui tu descripción y analisis:
 
+En este cuarto ejercicio he realizado un análisis completo de la serie temporal mediante una descomposición clásica aditiva. La serie, construida sintéticamente, permite separar sus componentes componentes estructurales para entender qué fuerzas impulsan los cambios en los datos a lo largo de los 6 años observados, desde 2018 al 2023. El análisis del residuo final ha sido determinante para verificar que el modelo es capaz de extraer toda la información determinista, dejando solo un ruido blanco que cumple con las propiedades de estacionariedad y normalidad. 
+
 ---
 
 **Pregunta 4.1** — ¿La serie presenta tendencia? Descríbela brevemente (tipo, dirección, magnitud aproximada).
 
-> _Escribe aquí tu respuesta_
+> Sí, la serie posee una tendencia lineal creciente. La dirección es positiva, indicando así un crecimiento constante en el tiempo. La magnitud aproximada es de 0.05 unidades por día, lo que indica una subida total de aproximadamente 109.5 unidades a lo largo de los 6 años. Es una tendencia estable y sin curvaturas. 
 
 **Pregunta 4.2** — ¿Hay estacionalidad? Indica el periodo aproximado en días y la amplitud del patrón estacional.
 
-> _Escribe aquí tu respuesta_
+> Sí, existe una estacionalidad muy marcada con un periodo de 365.25 días. El patrón muestra una oscilación compleja con una amplitud aproximada de ± 15 a 20 unidades respecto al valor central de la tendencia. Este patrón se repite de forma idéntica en cada ciclo anual, indicando efectos de calendario claramente definidos. 
 
 **Pregunta 4.3** — ¿Se aprecian ciclos de largo plazo en la serie? ¿Cómo los diferencias de la tendencia?
 
-> _Escribe aquí tu respuesta_
+> Sí, se observa un ciclo de largo plazo de unos 4 años. A diferencia de la tendencia, que marca una dirección general, los ciclos son subidas y bajadas más largas que no siguen un patrón tan fijo como la estacionalidad.
 
 **Pregunta 4.4** — ¿El residuo se ajusta a un ruido ideal? Indica la media, la desviación típica y el resultado del test de normalidad (p-value) para justificar tu respuesta.
 
-> _Escribe aquí tu respuesta_
+> El residuo se ajusta bien a un ruido ideal: tiene una media cercana a 0, una desviación típica alrededor de 3.5 y el test de normalidad (Jarque-Bera) da un p-valor mayor a 0.05, lo que indica que sigue una distribución normal. Además, no presenta autocorrelación, por lo que no queda información por explicar en la serie.
 
 ---
 
